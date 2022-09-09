@@ -30,14 +30,33 @@ const App = () => {
   };
 
   const updateNote = (text) => {
-    setNotes((oldNotes) =>
-      oldNotes.map((oldNote) => {
-        return oldNote.id === currentNoteId
-          ? { ...oldNote, body: text }
-          : oldNote;
-      })
-    );
+    //Try to rearrange the most recent-modified to be at the top
+    setNotes(oldNotes => {
+      const newArray = []
+      for (let i = 0; i < oldNotes.length; i++) {
+        const oldNote = oldNotes[i];
+        if (oldNote.id === currentNoteId) {
+          newArray.unshift({...oldNote, body: text})
+        } else {
+          newArray.push(oldNote)
+        }
+        
+      }
+      return newArray
+    })
+
+    // setNotes((oldNotes) =>
+    //   oldNotes.map((oldNote) => {
+    //     return oldNote.id === currentNoteId
+    //       ? { ...oldNote, body: text }
+    //       : oldNote;
+    //   })
+    // );
   };
+
+  const deleteNote = (e, noteId) => {
+    e.stopPropagation()
+  }
 
   const findCurrentNote = () => {
     return (
@@ -56,6 +75,7 @@ const App = () => {
             currentNote={findCurrentNote()}
             setCurrentNoteId={setCurrentNoteId}
             newNote={createNewNote}
+            deleteNote={deleteNote}
           />
           {currentNoteId && notes.length > 0 && (
             <Editor currentNote={findCurrentNote()} updateNote={updateNote} />
